@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "zte-l13"
-version = "0.1.0"
+version = "0.2.0"
 description = ""
 authors = ["bugcity <wakamesukusuki@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.9"
 requests = "^2.31.0"
 
 

@@ -22,3 +22,4 @@ def test_dict_to_class():
     assert hasattr(obj, 'b')
     assert not hasattr(obj, 'c')
     assert obj.__class__ == DictToClass
+    assert obj.dictionary == d

@@ -5,6 +5,9 @@ import hashlib
 class DictToClass:
     """辞書をクラスに変換する
     """
+
+    dictionary = {}
+
     def __init__(self, dictionary: dict, int_items: list = [], float_items: list = []):
         """コンストラクタ
 
@@ -13,6 +16,7 @@ class DictToClass:
             int_items (list, optional): intに変換するキー. Defaults to [].
             float_items (list, optional): floatに変換するキー. Defaults to [].
         """
+        self.dictionary = dictionary
         for key, value in dictionary.items():
             if key in int_items:
                 value = int(value)
