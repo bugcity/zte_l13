@@ -16,13 +16,13 @@ class DictToClass:
             int_items (list, optional): intに変換するキー. Defaults to [].
             float_items (list, optional): floatに変換するキー. Defaults to [].
         """
-        self.dictionary = dictionary
         for key, value in dictionary.items():
             if key in int_items:
                 value = int(value)
             elif key in float_items:
                 value = float(value)
             setattr(self, key, value)
+            self.dictionary[key] = value
 
 
 def jquery_now() -> int:
