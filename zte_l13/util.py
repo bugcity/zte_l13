@@ -10,6 +10,7 @@ class DictToClass:
 
     def __init__(self, dictionary: dict, int_items: list = [], float_items: list = []):
         """コンストラクタ
+           型変換できない場合はNoneになる
 
         Args:
             dictionary (dict): 変換元の辞書
@@ -17,10 +18,13 @@ class DictToClass:
             float_items (list, optional): floatに変換するキー. Defaults to [].
         """
         for key, value in dictionary.items():
-            if key in int_items:
-                value = int(value)
-            elif key in float_items:
-                value = float(value)
+            try:
+                if key in int_items:
+                    value = int(value)
+                elif key in float_items:
+                    value = float(value)
+            except ValueError:
+                value = None
             setattr(self, key, value)
             self.dictionary[key] = value
 

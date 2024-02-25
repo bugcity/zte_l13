@@ -114,5 +114,7 @@ class ZTEL13:
         """
         int_items = ['lte_rssi', 'lte_rsrp', 'Z5g_rsrp', 'Z5g_rsrq']
         float_items = ['lte_snr', 'Z5g_SINR']
-        res = self._get_cmd_process(','.join(int_items + float_items))
+        items = int_items + float_items
+        res = self._get_cmd_process(','.join(items))
+        res = {k: res[k] for k in items}
         return DictToClass(res, int_items=int_items, float_items=float_items)
