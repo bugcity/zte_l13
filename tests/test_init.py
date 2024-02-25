@@ -26,6 +26,7 @@ def test_get_signal_info(mocker, zte_l13):
         'zte_l13.ZTEL13._get_cmd_process',
         return_value={'lte_rssi': '-100', 'lte_rsrp': '-110', 'lte_snr': '10.2',
                       'Z5g_rsrp': '-180', 'Z5g_rsrq': '-10', 'Z5g_SINR': '27.8',
+                      'signalbar': '4',
                       'LD': 'test', 'status': '0'})
     data = zte_l13.get_signal_info()
     assert data is not None
@@ -35,8 +36,10 @@ def test_get_signal_info(mocker, zte_l13):
     assert data.Z5g_rsrp == -180
     assert data.Z5g_rsrq == -10
     assert data.Z5g_SINR == 27.8
+    assert data.signalbar == 4
     assert data.dictionary.keys() == {'lte_rssi', 'lte_rsrp', 'lte_snr',
-                                      'Z5g_rsrp', 'Z5g_rsrq', 'Z5g_SINR'}
+                                      'Z5g_rsrp', 'Z5g_rsrq', 'Z5g_SINR',
+                                      'signalbar'}
 
 
 def test_reboot(zte_l13):

@@ -110,9 +110,9 @@ class ZTEL13:
         """L13の信号情報を取得する
 
         Returns:
-            DictToClass: 信号情報 (lte_rssi, lte_rsrp, lte_snr, Z5g_rsrp, Z5g_rsrq, Z5g_SINR)
+            DictToClass: 信号情報 (lte_rssi, lte_rsrp, lte_snr, Z5g_rsrp, Z5g_rsrq, Z5g_SINR, signalbar)
         """
-        int_items = ['lte_rssi', 'lte_rsrp', 'Z5g_rsrp', 'Z5g_rsrq']
+        int_items = ['lte_rssi', 'lte_rsrp', 'Z5g_rsrp', 'Z5g_rsrq', 'signalbar']
         float_items = ['lte_snr', 'Z5g_SINR']
         items = int_items + float_items
         res = self._get_cmd_process(','.join(items))
