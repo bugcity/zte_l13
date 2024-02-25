@@ -17,6 +17,7 @@ class DictToClass:
             int_items (list, optional): intに変換するキー. Defaults to [].
             float_items (list, optional): floatに変換するキー. Defaults to [].
         """
+        self.dictionary = {}
         for key, value in dictionary.items():
             try:
                 if key in int_items:
