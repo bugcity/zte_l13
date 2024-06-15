@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "zte-l13"
-version = "0.3.0"
+version = "0.4.0"
 description = ""
 authors = ["bugcity <wakamesukusuki@gmail.com>"]
 readme = "README.md"

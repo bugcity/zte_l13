@@ -31,6 +31,8 @@ print(info.Z5g_rsrp)
 print(info.Z5g_rsrq)
 print(info.Z5g_SINR)
 
+info = zl.get_bytes()
+
 # デバイスを制御
 # 例: デバイスの再起動
 zl.reboot()
