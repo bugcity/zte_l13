@@ -118,3 +118,30 @@ class ZTEL13:
         res = self._get_cmd_process(','.join(items))
         res = {k: res[k] for k in items}
         return DictToClass(res, int_items=int_items, float_items=float_items)
+
+    def get_bytes(self) -> DictToClass:
+        """通信量やスループットを取得する
+
+        Returns:
+            DictToClass: 通信量やスループット
+                (realtime_tx_bytes, realtime_rx_bytes, realtime_time, realtime_tx_thrpt, realtime_rx_thrpt,
+                 monthly_rx_bytes, monthly_tx_bytes, monthly_time, monthly_kddi_tx, monthly_kddi_rx,
+                 hsplus_monthly_kddi_tx, hsplus_monthly_kddi_rx)
+        """
+        items = [
+            'realtime_tx_bytes',
+            'realtime_rx_bytes',
+            'realtime_time',
+            'realtime_tx_thrpt',
+            'realtime_rx_thrpt',
+            'monthly_rx_bytes',
+            'monthly_tx_bytes',
+            'monthly_time',
+            'monthly_kddi_tx',
+            'monthly_kddi_rx',
+            'hsplus_monthly_kddi_tx',
+            'hsplus_monthly_kddi_rx',
+        ]
+        res = self._get_cmd_process(','.join(items))
+        res = {k: res[k] for k in items}
+        return DictToClass(res, int_items=items)
