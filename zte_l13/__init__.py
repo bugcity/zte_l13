@@ -1,9 +1,18 @@
 import requests
 from .util import jquery_now, password_algorithms_cookie, hex_sha256, DictToClass
+from enum import Enum
 
 
 class ZTEL13:
     _session = None
+
+    class WAN(Enum):
+        W4G = 'Only_LTE'
+        W5G = 'LTE_AND_5G'
+
+    class WAN5GSA(Enum):
+        enable = 'disable_mode_none'
+        disabel = 'disable_mode_sa'
 
     def __init__(self, host: str, password: str):
         """コンストラクタ
@@ -15,6 +24,7 @@ class ZTEL13:
         self.host = host
         self.password = password
         self._session = requests.Session()
+        self.logined = False
 
     def _get_cmd_process(self, cmd: str, with_ts: bool = False) -> dict:
         """goform_get_cmd_processを実行する
@@ -92,7 +102,8 @@ class ZTEL13:
         pw = password_algorithms_cookie(p1 + a.LD)
         res = self._set_cmd_process('LOGIN', {'password': pw})
         res = DictToClass(res)
-        return res.result == '0'
+        self.logined = res.result == '0'
+        return self.logined
 
     def reboot(self) -> bool:
         """L13を再起動する
@@ -104,18 +115,20 @@ class ZTEL13:
         a1 = hex_sha256(a.wa_inner_version + a.cr_version)
         ad = hex_sha256(a1 + a.RD)
         self._set_cmd_process('REBOOT_DEVICE', {'AD': ad})
+        self.logined = False
         return True
 
     def get_signal_info(self) -> DictToClass:
         """L13の信号情報を取得する
 
         Returns:
-            DictToClass: 信号情報 (lte_rssi, lte_rsrp, lte_snr, Z5g_rsrp, Z5g_rsrq, Z5g_SINR, signalbar)
+            DictToClass: 信号情報 (network_type, wan_active_band, nr5g_action_band, lte_rssi, lte_rsrp, lte_snr, Z5g_rsrp, Z5g_rsrq, Z5g_SINR, signalbar)
         """
+        str_items = ['network_type', 'wan_active_band', 'nr5g_action_band']
         int_items = ['lte_rssi', 'lte_rsrp', 'Z5g_rsrp', 'Z5g_rsrq', 'signalbar']
         float_items = ['lte_snr', 'Z5g_SINR']
-        items = int_items + float_items
-        res = self._get_cmd_process(','.join(items))
+        items = str_items + int_items + float_items
+        res = self._get_cmd_process(','.join(items), with_ts=True)
         res = {k: res[k] for k in items}
         return DictToClass(res, int_items=int_items, float_items=float_items)
 
@@ -145,3 +158,18 @@ class ZTEL13:
         res = self._get_cmd_process(','.join(items))
         res = {k: res[k] for k in items}
         return DictToClass(res, int_items=items)
+
+    def set_bearer(self, wan: WAN, sa: WAN5GSA) -> bool:
+        """優先ネットワークを設定する
+
+        Args:
+            wan (WAN): 優先ネットワーク
+            sa (WAN5GSA): 5G SAを有効にするか
+
+        Returns:
+            bool: True: 成功, False: 失敗
+        """
+        value = wan.value + '&sa_nsa_mode_disable_setting=' + sa.value
+        res = self._set_cmd_process('SET_BEARER_PREFERENCE', {'BearerPreference': value})
+        res = DictToClass(res)
+        return res.result == 'success'
