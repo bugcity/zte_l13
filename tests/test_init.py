@@ -67,3 +67,8 @@ def test_get_signal_info(mocker, zte_l13):
 
 def test_reboot(zte_l13):
     assert zte_l13.reboot() is True
+
+
+def test_set_bearer(zte_l13):
+    assert zte_l13.set_bearer(ZTEL13.WAN.W4G, ZTEL13.WAN5GSA.enable) is True
+    assert zte_l13.set_bearer(ZTEL13.WAN.W5G, ZTEL13.WAN5GSA.enable) is True

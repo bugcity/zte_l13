@@ -169,7 +169,14 @@ class ZTEL13:
         Returns:
             bool: True: 成功, False: 失敗
         """
-        value = wan.value + '&sa_nsa_mode_disable_setting=' + sa.value
-        res = self._set_cmd_process('SET_BEARER_PREFERENCE', {'BearerPreference': value})
+        a = self._rd()
+        a1 = hex_sha256(a.wa_inner_version + a.cr_version)
+        ad = hex_sha256(a1 + a.RD)
+        params = {
+            'BearerPreference': wan.value,
+            'sa_nsa_mode_disable_setting': sa.value,
+            'AD': ad,
+        }
+        res = self._set_cmd_process('SET_BEARER_PREFERENCE', params)
         res = DictToClass(res)
         return res.result == 'success'
