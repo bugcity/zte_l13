@@ -1,24 +1,15 @@
-[tool.poetry]
+[project]
 name = "zte-l13"
-version = "0.6.0"
-description = ""
-authors = ["bugcity <wakamesukusuki@gmail.com>"]
+version = "0.6.1"
+description = "ZTE L13"
 readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "requests>=2.32.3",
+]
 
-[tool.poetry.dependencies]
-python = "^3.9"
-requests = "^2.31.0"
-
-
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.0.1"
-pytest-mock = "^3.12.0"
-python-dotenv = "^1.0.1"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.pytest.ini_options]
-pythonpath = "zte_l13"
-testpaths = ["tests",]
+[tool.uv]
+dev-dependencies = [
+    "pytest-mock>=3.14.0",
+    "pytest>=8.3.3",
+]
