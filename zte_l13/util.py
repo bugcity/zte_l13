@@ -6,17 +6,17 @@ class DictToClass:
     """辞書をクラスに変換する
     """
 
-    dictionary = {}
-
-    def __init__(self, dictionary: dict, int_items: list = [], float_items: list = []):
+    def __init__(self, dictionary: dict, int_items: list[str] | None = None, float_items: list[str] | None = None):
         """コンストラクタ
            型変換できない場合はNoneになる
 
         Args:
             dictionary (dict): 変換元の辞書
-            int_items (list, optional): intに変換するキー. Defaults to [].
-            float_items (list, optional): floatに変換するキー. Defaults to [].
+            int_items (list[str] | None, optional): intに変換するキー. Defaults to None.
+            float_items (list[str] | None, optional): floatに変換するキー. Defaults to None.
         """
+        int_items = int_items or []
+        float_items = float_items or []
         self.dictionary = {}
         for key, value in dictionary.items():
             try:

@@ -12,7 +12,7 @@ class ZTEL13:
 
     class WAN5GSA(Enum):
         enable = 'disable_mode_none'
-        disabel = 'disable_mode_sa'
+        disable = 'disable_mode_sa'
 
     def __init__(self, host: str, password: str):
         """コンストラクタ
@@ -91,6 +91,24 @@ class ZTEL13:
         res = self._get_cmd_process('wa_inner_version,cr_version,RD')
         return DictToClass(res)
 
+    def _query_items(
+        self,
+        items: list[str],
+        int_items: list[str] | None = None,
+        float_items: list[str] | None = None,
+        with_ts: bool = False,
+    ) -> DictToClass:
+        """items リストを一括取得して DictToClass で返す"""
+        res = self._get_cmd_process(','.join(items), with_ts=with_ts)
+        res = {k: res[k] for k in items}
+        return DictToClass(res, int_items=int_items, float_items=float_items)
+
+    def _compute_ad(self) -> str:
+        """REBOOT/SET_BEARER 用の AD 値を計算する"""
+        a = self._rd()
+        a1 = hex_sha256(a.wa_inner_version + a.cr_version)
+        return hex_sha256(a1 + a.RD)
+
     def login(self) -> bool:
         """L13にログインする
 
@@ -111,10 +129,7 @@ class ZTEL13:
         Returns:
             bool: True: 再起動成功(常にTrueを返す)
         """
-        a = self._rd()
-        a1 = hex_sha256(a.wa_inner_version + a.cr_version)
-        ad = hex_sha256(a1 + a.RD)
-        self._set_cmd_process('REBOOT_DEVICE', {'AD': ad})
+        self._set_cmd_process('REBOOT_DEVICE', {'AD': self._compute_ad()})
         self.logined = False
         return True
 
@@ -127,10 +142,7 @@ class ZTEL13:
         str_items = ['network_type', 'wan_active_band', 'nr5g_action_band']
         int_items = ['lte_rssi', 'lte_rsrp', 'Z5g_rsrp', 'Z5g_rsrq', 'signalbar']
         float_items = ['lte_snr', 'Z5g_SINR']
-        items = str_items + int_items + float_items
-        res = self._get_cmd_process(','.join(items), with_ts=True)
-        res = {k: res[k] for k in items}
-        return DictToClass(res, int_items=int_items, float_items=float_items)
+        return self._query_items(str_items + int_items + float_items, int_items=int_items, float_items=float_items, with_ts=True)
 
     def get_bytes(self) -> DictToClass:
         """通信量やスループットを取得する
@@ -155,9 +167,7 @@ class ZTEL13:
             'hsplus_monthly_kddi_tx',
             'hsplus_monthly_kddi_rx',
         ]
-        res = self._get_cmd_process(','.join(items))
-        res = {k: res[k] for k in items}
-        return DictToClass(res, int_items=items)
+        return self._query_items(items, int_items=items)
 
     def set_bearer(self, wan: WAN, sa: WAN5GSA) -> bool:
         """優先ネットワークを設定する
@@ -169,13 +179,10 @@ class ZTEL13:
         Returns:
             bool: True: 成功, False: 失敗
         """
-        a = self._rd()
-        a1 = hex_sha256(a.wa_inner_version + a.cr_version)
-        ad = hex_sha256(a1 + a.RD)
         params = {
             'BearerPreference': wan.value,
             'sa_nsa_mode_disable_setting': sa.value,
-            'AD': ad,
+            'AD': self._compute_ad(),
         }
         res = self._set_cmd_process('SET_BEARER_PREFERENCE', params)
         res = DictToClass(res)

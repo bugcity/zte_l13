@@ -1,3 +1,7 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
 [project]
 name = "zte-l13"
 version = "0.6.1"
@@ -8,8 +12,14 @@ dependencies = [
     "requests>=2.32.3",
 ]
 
-[tool.uv]
-dev-dependencies = [
+[dependency-groups]
+dev = [
     "pytest-mock>=3.14.0",
     "pytest>=8.3.3",
+    "python-dotenv>=1.0.0",
+]
+
+[tool.pytest.ini_options]
+markers = [
+    "integration: 実機デバイスが必要なテスト",
 ]
